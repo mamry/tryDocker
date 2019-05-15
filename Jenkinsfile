@@ -66,7 +66,7 @@ node('linux') {
         }
     }
     
-    stage('Delete Test Stack') {
+   /* stage('Delete Test Stack') {
             withCredentials([[
                 $class: 'AmazonWebServicesCredentialsBinding', 
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
@@ -76,5 +76,5 @@ node('linux') {
             sh 'aws cloudformation delete-stack --stack-name final-test --region us-east-1'
             sh 'aws cloudformation wait stack-delete-complete --stack-name final-test --region us-east-1'
         }
-    }
+    }*/ 
 }
