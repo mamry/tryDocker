@@ -61,7 +61,7 @@ node('linux') {
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli get hello world
             sh '''
                ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) redis-cli set hello world
-               ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) redis-cli get hello world
+               ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) redis-cli get hello 
              '''
         }
     }
