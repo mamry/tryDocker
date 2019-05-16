@@ -64,8 +64,8 @@ node('linux') {
                         cat dockip
                         cat dockip | tr -d '[]",[:space:]' > dockerip
                         cat dockerip
-               ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) redis-cli set hello world
-               ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) redis-cli get hello 
+               ssh -o StrictHostKeyChecking=no ubuntu@$(dockerip) redis-cli set hello world
+               ssh -o StrictHostKeyChecking=no ubuntu@$(dockerip) redis-cli get hello 
              '''
         }
     }
