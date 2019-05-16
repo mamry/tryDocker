@@ -15,7 +15,7 @@ node('linux') {
          dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
          ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} uptime
          '''
-     }       
+            
                     }
             }
     }
