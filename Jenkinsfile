@@ -12,7 +12,7 @@ node('linux') {
 
                     sshagent(['ssh-agent-ID']) {
          sh ''' 
-         dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+         dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=image-id,Values=ami-043218c94b0cb8d43' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
          ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} uptime
          '''
             
@@ -33,7 +33,7 @@ node('linux') {
             //'''
              
               sh ''' 
-        dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+        dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=image-id,Values=ami-043218c94b0cb8d43' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
         ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} docker run -d --name redis1 -p 6379:6379 redis:latest
         '''
          }
@@ -49,7 +49,7 @@ node('linux') {
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli set hello world
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli get hello world
             sh ''' 
-       dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+       dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=image-id,Values=ami-043218c94b0cb8d43' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
        ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} redis-cli set hello world
        ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} redis-cli get hello
        '''
