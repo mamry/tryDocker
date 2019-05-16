@@ -60,7 +60,7 @@ node('linux') {
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli set hello world
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli get hello world
             sh '''
-            dockerip=$(aws ec2 describe-instances --region us-east-1 --filters "Name=image-id,Values=ami-043218c94b0cb8d43" --query 'Reservations[*].Instances[*].PublicIpAddress')
+            dockerip=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=image-id,Values=ami-043218c94b0cb8d43' --query 'Reservations[*].Instances[*].PublicIpAddress')
         
                ssh -o StrictHostKeyChecking=no ubuntu@$(dockerip) redis-cli set hello world
                ssh -o StrictHostKeyChecking=no ubuntu@$(dockerip) redis-cli get hello 
