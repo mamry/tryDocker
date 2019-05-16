@@ -1,7 +1,3 @@
-def dockernode;
-def dockerip;
-def dockip;
-
 node('linux') {
     
     stage('Create Test Stack') {
@@ -14,23 +10,12 @@ node('linux') {
                     sh 'aws cloudformation describe-stacks --stack-name final-test --region us-east-1'
                     returnStdout: true
 
-                    sshagent(['ssh-agent-ID']){
-                        //dockernode=$(aws cloudformation describe-stacks --stack-name final-test --region us-east-1 --query Stacks[].Outputs[].[OutputValue] --output text)
-                        
-                        //dockerip=$(aws ec2 describe-instances --region us-east-1 --filters "Name=image-id,Values=ami-043218c94b0cb8d43" --query "Reservations[*].Instances[*].PublicIpAddress")
-
-                        sh '''
-                        aws ec2 describe-instances --region us-east-1 --filters "Name=image-id,Values=ami-043218c94b0cb8d43" --query "Reservations[*].Instances[*].PublicIpAddress" > dockip
-                        cat dockip
-                        cat dockip | tr -d '[]",[:space:]' > dockerip
-                        cat dockerip
-                        '''
-                        //ssh -o StrictHostKeyChecking=no ubuntu@$dockernode uptime
-                        sshagent(['ssh-agent-ID']) {
-                         sh 'ssh -o StrictHostKeyChecking=no ubuntu@$(cat dockerip) uptime'
-                        }
-
-                    
+                    sshagent(['ssh-agent-ID']) {
+         sh ''' 
+         dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+         ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} uptime
+         '''
+     }       
                     }
             }
     }
@@ -47,6 +32,10 @@ node('linux') {
             //ssh -o StrictHostKeyChecking=no ubuntu@$dockerip -d --name redis1 -p 6379:6379 redis:latest'
             //'''
              
+              sh ''' 
+        dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+        ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} docker run -d --name redis1 -p 6379:6379 redis:latest
+        '''
          }
      }
     
@@ -59,23 +48,18 @@ node('linux') {
        
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli set hello world
 //ssh -o StrictHostKeyChecking=no ubuntu@${dockerip} redis-cli get hello world
-            sh '''
-          dockerIp=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)        
-               ssh -o StrictHostKeyChecking=no ubuntu@$(dockerIp) redis-cli set hello world
-               ssh -o StrictHostKeyChecking=no ubuntu@$(dockerIp) redis-cli get hello 
-             '''
+            sh ''' 
+       dockerIP=$(aws ec2 describe-instances --region us-east-1 --filters 'Name=tag:Name,Values=docker1' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+       ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} redis-cli set hello world
+       ssh -o StrictHostKeyChecking=no ubuntu@${dockerIP} redis-cli get hello
+       '''
         }
     }
     
-   /* stage('Delete Test Stack') {
-            withCredentials([[
-                $class: 'AmazonWebServicesCredentialsBinding', 
-                accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
-                credentialsId: '5f6722b0-b29e-4bfc-86c2-10b9ca813672', 
-                secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
-                {  
+    stage('Delete Test Stack') {
+           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS-Password-ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
             sh 'aws cloudformation delete-stack --stack-name final-test --region us-east-1'
-            sh 'aws cloudformation wait stack-delete-complete --stack-name final-test --region us-east-1'
-        }
-    }*/ 
+            sh 'aws cloudformation wait stack-delete-complete --stack-name final-test --region us-east-1'   
+       }
+    }
 }
